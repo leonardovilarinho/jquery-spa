@@ -1,0 +1,16 @@
+{
+    "empresas": [
+        {
+            "nome": "Microfost Corporation",
+            "fundador": "Bill Gates"
+        },
+        {
+            "nome": "Apple",
+            "fundador": "Steven Jobs"
+        },
+        {
+            "nome": "SBT",
+            "fundador": "Silvio Santos"
+        }
+    ]
+}
