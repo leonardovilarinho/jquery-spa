@@ -7,3 +7,10 @@ $.getJSON('dados.json', function(json) {
 $('.test').click(function() {
     alert('Teste com sucesso');
 });
+
+
+Session.set('item', 'valor');
+
+console.log(Session.get('item'));
+
+console.log(Session.has('item'));
