@@ -67,7 +67,17 @@ Após termos um arquivo lá, podemos adiciona-lo ao nosso index usando o atribut
        </body>
     </html>
 
+### Tipos de usuários (para template)
+Nessa nova versão, adicionamos tipos de usuários, para que você possa controlar facilmente seu template. Agora no diretório `template` temos subdiretórios para indicar layouts diferents para usuários diferentes, os arqivos na raiz do diretório `template` serão carregados quando não houver nenhum tipo de usuário definido (any).
 
+Para trocar o usuário atual use:
+
+    User( {key : 'value'} ); // onde o objeto no parametro pode ser dados como nome do usuario etc.
+    User.type('teacher'); // mudando tipo de usuário para teacher
+
+A partir dessa mudança, o tempate será o que está dentro do diretório `template/teacher`, para dizer novamente que ão há usuário ativo use:
+
+    User.type('any'); // digo que nenhum usuario está logado
 
 ### Rotas
 Precisamos da confirmação que uma rota existe, o arquivo `routes.json` é onde você nos informa isso. Parar criar uma rota, dentro das chaves iniciais `{}`, crie um atributo:
