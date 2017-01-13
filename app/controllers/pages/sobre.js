@@ -1,16 +1,28 @@
-$.getJSON('dados.json', function(json) {
-    $('.template-empresas').template('nome-template');
-    $.tmpl('nome-template', json.empresas).appendTo('.tabela-empresas');
-});
+
+    $.getJSON('example/dados.json', function(json) {
+        Template( $('.template-empresas'), json.empresas ).appendTo('.tabela-empresas');
+    });
 
 
-$('.test').click(function() {
-    alert('Teste com sucesso');
-});
+    $('.test').click(function() {
+        new Ajax('example/ajax.php')
+            .data( {message: 'messagem'} )
+            .type('get')
+            .send(function(result) {
+                alert(result);
+            }, function (error) {
+                console.log(error);
+            });
+    });
 
 
-Session.set('item', 'valor');
+    Session.set('item', 'valor');
 
-console.log(Session.get('item'));
+    console.log(Session.get('item'));
 
-console.log(Session.has('item'));
+    console.log(Session.has('item'));
+
+    if(Params.has('name')) {
+        console.log('encontrou');
+        $('.params').text('Parametros: ' + Params.all().name + ' | ' + Params.all().age);
+    }

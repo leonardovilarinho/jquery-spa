@@ -1,18 +1,17 @@
-$(function ()
-{
-    document.__defineGetter__("cookie", function() { return '';} );
-    document.__defineSetter__("cookie", function() {} );
+if (typeof(Storage) === "undefined") {
+    alert('Seu navegador não suporta localStorage, pode ser que algo não funcione, atualize seu navegador');
+}
 
-    $('*[extends]').each(function(){
-        $(this).load(Config.dir_template + $(this).attr('extends') + '.html');
-    });
-
-    $(window).on('hashchange', hashchanged);
-    hashchanged();
-});
 
 var Assets = {
     loadedJS: {},
+    removeJS: function(asset_name) {
+        delete this.loadedJS[asset_name];
+        $('script[src="' + asset_name + '"]').remove();
+    },
+    hasJS: function(asset_name) {
+        return $('script[src="' + asset_name + '"]').length > 0;
+    },
     loadJS: function (asset_name) {
         if (typeof this.loadedJS[asset_name] != 'undefined' )
             return;
@@ -31,18 +30,50 @@ var Assets = {
     }
 };
 
-window.onload = function() {
-    Assets.loadJS('resources/js/jquery.tmpl.min.js');
-    Assets.loadJS('resources/js/jquery.tmplPlus.min.js');
-    Assets.loadJS('resources/js/jquery.gdb.min.js');
-    Assets.loadJS('resources/js/localstorage.js');
-    Assets.loadJS('resources/js/sessionstorage.js');
-    Assets.loadJS('resources/js/pouchdb.min.js');
-}
+function LoadResources(){
+
+    Assets.loadJS('resources/kernel/jquery.tmpl.min.js');
+    Assets.loadJS('resources/kernel/jquery.gdb.min.js');
+    Assets.loadJS('resources/kernel/localstorage.js');
+    Assets.loadJS('resources/kernel/sessionstorage.js');
+    Assets.loadJS('resources/kernel/pouchdb.min.js');
+    Assets.loadJS('resources/kernel/aliases.js');
+    Assets.loadJS('resources/kernel/ajax.js');
+    Assets.loadJS('resources/kernel/param.js');
+};
+
+$(function ()
+{
+    LoadResources();
+    document.__defineGetter__("cookie", function() { return '';} );
+    document.__defineSetter__("cookie", function() {} );
+
+    if(Config.debug)
+        $.ajaxSetup ( {cache: false} );
+
+    $('*[extends]').each(function(){
+        $(this).load(Config.dir_template + $(this).attr('extends') + '.html');
+    });
+
+    $(window).on('hashchange', hashchanged);
+    hashchanged();
+});
 
 
 function hashchanged()
 {
+    if (localStorage.getItem('jquery_spa_hash_changed') != null)
+        localStorage.removeItem('jquery_spa_hash_changed');
+    else {
+        var keys = Object.keys(localStorage), i = keys.length;
+
+        while ( i-- ) {
+            if(keys[i].indexOf('jquery_spa_params_') !== -1) {
+                localStorage.removeItem(keys[i]);
+            }
+        }
+    }
+
     var app = '.' + $('html').attr('app-name');
     var content = $('*[content]');
 
@@ -63,12 +94,17 @@ function hashchanged()
         content.load(Config.dir_views + route.replace('!', '') + '.html');
 
         var first = route.substring(0, 1);
+
         if(first != '!')
-           $.getScript(Config.dir_controllers + route + '.js', function(){});
+            $.getScript(Config.dir_controllers + route + '.js', function(){});
+
+        if( typeof Config.load_gdb != 'undefined')
+            Config.load_gdb.destroyInstance();
 
     }).error(function() {
         console.log('Há algum erro no arquivo de rotas');
     });
+
 }
 
 function defineRoute(routes, route_p)

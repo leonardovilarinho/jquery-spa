@@ -2,9 +2,14 @@ var scope = {
     name : 'Leonardo',
     age: 20,
 
-    submit : function() {
-        console.debug(scope.name);
+    submit : function (){
+        Params.add( scope );
+        console.debug(Params.all());
+    },
+
+    to : function() {
+        To_route('sobre');
     }
 };
 
-GDB( {page: scope} );
+Bind( {page: scope} );
