@@ -9,6 +9,11 @@ var scope = {
 
     to : function() {
         To_route('sobre');
+    },
+
+    toTeacher : function() {
+        User( {name: 'leonardo'} );
+        User.type('teacher');
     }
 };
 

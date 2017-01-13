@@ -40,6 +40,7 @@ function LoadResources(){
     Assets.loadJS('resources/kernel/aliases.js');
     Assets.loadJS('resources/kernel/ajax.js');
     Assets.loadJS('resources/kernel/param.js');
+    Assets.loadJS('resources/kernel/user.js');
 };
 
 $(function ()
@@ -51,17 +52,32 @@ $(function ()
     if(Config.debug)
         $.ajaxSetup ( {cache: false} );
 
-    $('*[extends]').each(function(){
-        $(this).load(Config.dir_template + $(this).attr('extends') + '.html');
-    });
-
     $(window).on('hashchange', hashchanged);
     hashchanged();
 });
 
 
+function extendTmpl() {
+    if(typeof User === 'undefined' || User._type === null || User._type == 'any') {
+        $('*[extends]').each(function(){
+            if($(this).is(':empty') || User._type != User._last)
+                $(this).load(Config.dir_template + $(this).attr('extends') + '.html');
+        });
+        if(typeof User != 'undefined')
+            User._last = User._type;
+    } else {
+        $('*[extends]').each(function(){
+            if(User._type != User._last)
+                $(this).load(Config.dir_template + User._type + '/' + $(this).attr('extends') + '.html');
+        });
+        User._last = User._type;
+    }
+}
+
 function hashchanged()
 {
+    extendTmpl();
+
     if (localStorage.getItem('jquery_spa_hash_changed') != null)
         localStorage.removeItem('jquery_spa_hash_changed');
     else {
